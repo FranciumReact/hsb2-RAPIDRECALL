@@ -19,10 +19,25 @@ class Game {
         var i = 0
         while (i < length) {
             val digit = Random.nextInt(10)
-            // Adds t
+            // Converts the number to a string
             sequence += digit.toString()
             i++
         }
+        return sequence
+    }
+
+    // Function that checks if the sequence is equal to the answer or not
+    fun checkAnswer(answer:String): Boolean {
+        // Checks if there is a sequence
+        if (sequence == "") return false
+
+        if (answer == sequence) return true
+
+        return false
+    }
+
+    // Helper function to get the sequence
+    fun getSequence(): String {
         return sequence
     }
 }
