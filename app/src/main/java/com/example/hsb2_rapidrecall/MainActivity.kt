@@ -32,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.LaunchedEffect
 
@@ -48,6 +47,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.ui.Alignment
 import java.util.Date
 
 
@@ -84,6 +84,18 @@ class MainActivity : ComponentActivity() {
                         },
                         onPrevious = {
                             screen = "previous"
+                        },
+                        onSummary = {
+                            screen = "summary"
+                        }
+                    )
+                }
+
+                if (screen == "summary"){
+                    AttemptSummary(
+                        prevAttempts = prevAttempts,
+                        onBack = {
+                            screen = "home"
                         }
                     )
                 }
@@ -126,7 +138,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Start(
     onStart: () -> Unit,
-    onPrevious: () -> Unit
+    onPrevious: () -> Unit,
+    onSummary: () -> Unit
     ) {
 
     Column(
@@ -161,7 +174,7 @@ fun Start(
 
         Button(
             onClick = {
-
+                onSummary()
             }
         ) {
             Text(
@@ -497,6 +510,60 @@ fun PreviousScreen(
                 onBack()
             }
         ){
+            Text(
+                text = "Back"
+            )
+        }
+    }
+}
+
+@Composable
+fun AttemptSummary(
+    prevAttempts: PrevAttempts,
+    onBack: () -> Unit
+    ) {
+    // total games
+    val total = prevAttempts.totalAttempts()
+
+    // Number of correct answers
+    val correct = prevAttempts.totalCorrectAttempts()
+
+    // Accuracy
+    val accuracy = prevAttempts.attemptAccuracy()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = "Attempt Summary",
+            fontSize = 24.sp
+        )
+
+        // Displays total attempts
+        Text(
+            text = "Total Attempts: $total"
+        )
+
+        // Displays # of correct attempts
+        Text(
+            text = "Correct Attempts: $correct"
+        )
+
+        // Displays accuracy percentage
+        Text(
+            text = "Accuracy: ${"%.1f".format(accuracy)}%"
+        )
+
+        Button(
+            onClick = {
+                onBack()
+            }
+        ) {
             Text(
                 text = "Back"
             )
