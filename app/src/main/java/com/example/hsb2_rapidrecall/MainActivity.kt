@@ -30,6 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +41,15 @@ import androidx.compose.ui.unit.sp
 
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+
+import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.text.input.KeyboardType
+import java.text.SimpleDateFormat
+import java.util.Locale
+import androidx.compose.foundation.layout.Spacer
+import java.util.Date
+
 
 /**
  * Main activity for the RapidRecall app.
@@ -64,14 +74,27 @@ class MainActivity : ComponentActivity() {
                 // Creates Game Object, assisted by Claude
                 val game = remember { Game() }
 
+                // Stores prev attempts
+                val prevAttempts = remember { PrevAttempts() }
+
                 if (screen == "home") {
                     Start(
                         onStart = {
                             screen = "choose"
+                        },
+                        onPrevious = {
+                            screen = "previous"
                         }
                     )
                 }
-
+                if (screen == "previous"){
+                    PreviousScreen(
+                        prevAttempts = prevAttempts,
+                        onBack = {
+                            screen = "home"
+                        }
+                    )
+                }
                 if (screen == "choose") {
                     ChooseLength(
                         onBack = {
@@ -88,6 +111,7 @@ class MainActivity : ComponentActivity() {
                 if (screen == "game") {
                     PlayGame(
                         game = game,
+                        prevAttempts = prevAttempts,
                         onBack = {
                             screen = "home"
                         }
@@ -100,7 +124,10 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun Start(onStart: () -> Unit) {
+fun Start(
+    onStart: () -> Unit,
+    onPrevious: () -> Unit
+    ) {
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -124,7 +151,7 @@ fun Start(onStart: () -> Unit) {
 
         Button(
             onClick = {
-
+                onPrevious()
             }
         ) {
             Text(
@@ -233,12 +260,15 @@ fun ChooseLength(
  * Displays the generated sequence one digit at a time.
  * After the sequence is shown, the player enters an answer.
  * Uses Game.kt to check if the answer is correct.
- *
  * The sequence display uses LaunchedEffect and delay.
- * Completed attempts are not saved yet.
+ * Previous attempts are stores
  */
 @Composable
-fun PlayGame(game: Game, onBack: () -> Unit) {
+fun PlayGame(
+    game: Game,
+    onBack: () -> Unit,
+    prevAttempts: PrevAttempts
+    ) {
 
     // Gets the sequence generated
     val sequence = game.getSequence()
@@ -338,6 +368,15 @@ fun PlayGame(game: Game, onBack: () -> Unit) {
                         // Checks the answer using Game.kt
                         correct = game.checkAnswer(answer)
 
+                        val attempt = RecordAttempt(
+                            sequence.length,
+                            sequence,
+                            answer,
+                            correct,
+                            System.currentTimeMillis()
+                        )
+
+                        prevAttempts.addAttempt(attempt)
                         // Marks the answer as submitted
                         submitted = true
                     },
@@ -380,6 +419,84 @@ fun PlayGame(game: Game, onBack: () -> Unit) {
                 onBack()
             }
         ) {
+            Text(
+                text = "Back"
+            )
+        }
+    }
+}
+
+@Composable
+fun PreviousScreen(
+    prevAttempts: PrevAttempts,
+    onBack: () -> Unit
+    ){
+    val attempts = prevAttempts.getAttempts()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = "Previous Attempts",
+            fontSize = 24.sp
+        )
+
+        // Checks if there is a record of previous attempts
+        if (attempts.isEmpty()){
+            Text(
+                text = "No previous attempts"
+            )
+        } else {
+            // Gets each recorded game
+            for (attempt in attempts) {
+                Text(
+                    text = "Length: ${attempt.length}"
+                )
+
+                Text(
+                    text = "Correct Sequence: ${attempt.sequence}"
+                )
+
+                Text(
+                    text = "Your Answer: ${attempt.answer}"
+                )
+
+                if (attempt.correctSeq) {
+                    Text(
+                        text = "Result: Correct"
+                    )
+                } else {
+                    Text(
+                        text = "Result: Incorrect"
+                    )
+                }
+
+                // Gets date
+                val date = SimpleDateFormat(
+                    "yyyy-MM-dd HH:mm:ss",
+                    Locale.getDefault()
+                )
+
+                Text(
+                    text = "Time: ${date.format(Date(attempt.time))}"
+                )
+
+                Spacer(
+                    modifier = Modifier.height(20.dp)
+                )
+            }
+        }
+
+        Button(
+            onClick = {
+                onBack()
+            }
+        ){
             Text(
                 text = "Back"
             )

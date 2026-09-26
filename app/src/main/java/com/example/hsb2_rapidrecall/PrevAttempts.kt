@@ -1,9 +1,4 @@
-package com.example.hsb2_rapidrecall.ui.theme
-/*
-Source:
-    https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/mutable-list-of.html
-    https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/to-list.html
- */
+package com.example.hsb2_rapidrecall
 
 /**
  * Stores all game attempts
@@ -11,7 +6,6 @@ Source:
  * Functions to view previous attempts and attempt stats
  * No issues
  */
-import com.example.hsb2_rapidrecall.RecordAttempt
 
 class PrevAttempts {
 
