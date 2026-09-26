@@ -5,6 +5,6 @@ class RecordAttempt (
     val length: Int,
     val sequence: String,
     val answer: String,
-    val correctSeq: String,
+    val correctSeq: Boolean,
     val time: Long
     )
