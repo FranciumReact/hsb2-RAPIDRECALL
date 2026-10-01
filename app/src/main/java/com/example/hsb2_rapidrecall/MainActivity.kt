@@ -8,7 +8,7 @@ https://developer.android.com/develop/ui/compose/text/user-input
 https://developer.android.com/develop/ui/compose/state
 
 Assistance:
-ChatGPT - Helped with the digit display, answer input and feedback.
+ChatGPT: Helped with the digit display, answer input and feedback.
 */
 
 import android.os.Bundle
@@ -134,7 +134,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
+// Start Screen
 @Composable
 fun Start(
     onStart: () -> Unit,
@@ -184,7 +184,7 @@ fun Start(
     }
 }
 
-
+// Choose the length of the string
 @Composable
 fun ChooseLength(
     onBack: () -> Unit,
@@ -273,7 +273,7 @@ fun ChooseLength(
  * Displays the generated sequence one digit at a time.
  * After the sequence is shown, the player enters an answer.
  * Uses Game.kt to check if the answer is correct.
- * The sequence display uses LaunchedEffect and delay.
+ * The sequence display uses LaunchedEffect and delay. - Assisted from ChatGPT
  * Previous attempts are stores
  */
 @Composable
@@ -517,6 +517,7 @@ fun PreviousScreen(
     }
 }
 
+// The summary of all attempts
 @Composable
 fun AttemptSummary(
     prevAttempts: PrevAttempts,

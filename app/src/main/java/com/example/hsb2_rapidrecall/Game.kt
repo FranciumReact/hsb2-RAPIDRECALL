@@ -3,6 +3,12 @@ package com.example.hsb2_rapidrecall
     https://kotlinlang.org/docs/strings.html#split-strings
 
  */
+
+/**
+ * Generates the random sequence of digits
+ * No one outside can access the sequence
+ * No issues
+ */
 import kotlin.random.Random
 
 class Game {
