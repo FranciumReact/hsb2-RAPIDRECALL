@@ -149,7 +149,7 @@ fun Start(
     ) {
 
         Text(
-            text = "RapidRecall"
+            text = "hsb2 - RapidRecall"
         )
 
         Button(
